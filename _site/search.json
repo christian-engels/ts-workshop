@@ -1,0 +1,296 @@
+[
+  {
+    "objectID": "day1_part4_arima.html",
+    "href": "day1_part4_arima.html",
+    "title": "Day 1 Part 4: ARIMA Modelling",
+    "section": "",
+    "text": "Load necessary libraries for data manipulation, finance data, and time-series analysis. These libraries will help us handle time series data, conduct ARIMA modeling, and visualize results effectively.\n\nlibrary(tidyverse)\nlibrary(tidyfinance)\nlibrary(tsibble)\nlibrary(fable)\nlibrary(feasts)\nlibrary(scales)\nlibrary(fabletools)"
+  },
+  {
+    "objectID": "day1_part4_arima.html#load-libraries",
+    "href": "day1_part4_arima.html#load-libraries",
+    "title": "Day 1 Part 4: ARIMA Modelling",
+    "section": "",
+    "text": "Load necessary libraries for data manipulation, finance data, and time-series analysis. These libraries will help us handle time series data, conduct ARIMA modeling, and visualize results effectively.\n\nlibrary(tidyverse)\nlibrary(tidyfinance)\nlibrary(tsibble)\nlibrary(fable)\nlibrary(feasts)\nlibrary(scales)\nlibrary(fabletools)"
+  },
+  {
+    "objectID": "day1_part4_arima.html#arima-processes",
+    "href": "day1_part4_arima.html#arima-processes",
+    "title": "Day 1 Part 4: ARIMA Modelling",
+    "section": "ARIMA Processes",
+    "text": "ARIMA Processes\nARIMA (AutoRegressive Integrated Moving Average) processes are commonly used in time series analysis to model and predict future values by combining autoregressive (AR), moving average (MA), and differencing components. The AR part captures the influence of past values, the MA part captures the influence of past forecast errors, and differencing ensures the series is stationary. ARIMA models are particularly useful for understanding trends and cyclic behaviors in time series data.\nAn autoregressive model of order p, denoted as AR(p), is written as:\n\ny_t = c + \\phi_1 y_{t-1} + \\phi_2 y_{t-2} + \\cdots + \\phi_p y_{t-p} + \\varepsilon_t,\n\nwhere \\varepsilon_t is white noise. This structure resembles a multiple regression with lagged values of y_t as predictors.\nIn contrast, a moving average model of order q, denoted MA(q), uses past forecast errors as predictors:\n\ny_t = c + \\varepsilon_t + \\theta_1 \\varepsilon_{t-1} + \\theta_2 \\varepsilon_{t-2} + \\cdots + \\theta_q \\varepsilon_{t-q},\n\nwhere \\varepsilon_t is white noise. Since we do not directly observe the values of \\varepsilon_t, it’s not a true regression in the usual sense.\nWhen differencing is combined with AR and MA components, we get a non-seasonal ARIMA model, where “integration” refers to the differencing process. The full model is written as:\n\ny'_t = c + \\phi_1 y'_{t-1} + \\cdots + \\phi_p y'_{t-p} + \\theta_1 \\varepsilon_{t-1} + \\cdots + \\theta_q \\varepsilon_{t-q} + \\varepsilon_t,\n\nwhere y'_t is the differenced series. This is an ARIMA(p, d, q) model, where:\n\np is the order of the autoregressive part,\nd is the degree of differencing required,\nq is the order of the moving average part.\n\nThe ARIMA model framework is powerful for capturing both trend and cyclical behaviors in time series data, making it a fundamental tool in forecasting."
+  },
+  {
+    "objectID": "day1_part4_arima.html#simulate-arima-processes",
+    "href": "day1_part4_arima.html#simulate-arima-processes",
+    "title": "Day 1 Part 4: ARIMA Modelling",
+    "section": "Simulate ARIMA Processes",
+    "text": "Simulate ARIMA Processes\nHere we simulate ARIMA processes to illustrate their characteristics.\n\nset.seed(42)\n\nn &lt;- 10^2\ninnovations &lt;- \n  tibble(\n    time = 1:n, \n    e = rnorm(n),\n    e_lag = lag(e, default = 0),\n  ) %&gt;% \n  as_tsibble(index = time)\n\ninnovations\n\n# A tsibble: 100 x 3 [1]\n    time       e   e_lag\n   &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;\n 1     1  1.37    0     \n 2     2 -0.565   1.37  \n 3     3  0.363  -0.565 \n 4     4  0.633   0.363 \n 5     5  0.404   0.633 \n 6     6 -0.106   0.404 \n 7     7  1.51   -0.106 \n 8     8 -0.0947  1.51  \n 9     9  2.02   -0.0947\n10    10 -0.0627  2.02  \n# ℹ 90 more rows\n\n\n\nPlot Innovations\nVisualize the random innovations generated for the ARIMA processes. This helps us understand the underlying noise component that drives the stochastic processes in ARIMA models.\n\ninnovations %&gt;% autoplot(e)\n\n\n\n\n\n\n\ninnovations %&gt;% \n  ggplot(aes(e)) + \n  geom_histogram(aes(y = after_stat(density))) +\n  stat_function(fun = dnorm, color = \"red\")\n\n`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.\n\n\n\n\n\n\n\n\n\n\n\nGenerate ARIMA Processes\nGenerate different ARIMA processes using the simulated innovations. We create ARMA(1,0), ARMA(0,1), and ARMA(1,1) processes to illustrate how varying the parameters affects the behavior of the time series.\n\narma_processes &lt;- \n  innovations %&gt;% \n  mutate(\n    random_walk = accumulate(\n      e, \n      (\\(y_lag, e) y_lag + e)\n    ),\n    arma10 = accumulate(\n      e, \n      (\\(y_lag, e) 0.9*y_lag + e)\n    ),\n    arma01 = -0.9*e_lag + e,\n    arma11 = accumulate2(\n      e, \n      e_lag,\n      .f = (\\(y_lag, e, e_lag) 0.9 * y_lag + 0.9 * e_lag + e),\n      .init = 0\n    )[-1]  \n  )\n\narma_processes\n\n# A tsibble: 100 x 7 [1]\n    time       e   e_lag random_walk arma10 arma01 arma11\n   &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;       &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;\n 1     1  1.37    0            1.37   1.37   1.37    1.37\n 2     2 -0.565   1.37         0.806  0.669 -1.80    1.90\n 3     3  0.363  -0.565        1.17   0.965  0.871   1.57\n 4     4  0.633   0.363        1.80   1.50   0.306   2.37\n 5     5  0.404   0.633        2.21   1.76  -0.165   3.11\n 6     6 -0.106   0.404        2.10   1.47  -0.470   3.05\n 7     7  1.51   -0.106        3.61   2.84   1.61    4.16\n 8     8 -0.0947  1.51         3.52   2.46  -1.46    5.01\n 9     9  2.02   -0.0947       5.54   4.23   2.10    6.45\n10    10 -0.0627  2.02         5.47   3.75  -1.88    7.56\n# ℹ 90 more rows\n\n\n\n\nDisplay ARIMA Components\nVisualize the generated ARIMA components using their autocorrelation functions (ACF) and partial autocorrelation functions (PACF). This helps us understand the persistence, memory, and dependence structures within each process.\nIn time series analysis, autocorrelation quantifies the relationship between values of a series at different time lags, offering insights into how past values influence future values within the same series. Unlike simple correlation, which measures the linear relationship between two distinct variables, autocorrelation assesses dependencies within a time series by examining lagged values.\nEach lag in a time series has an associated autocorrelation coefficient, with r_1 representing the correlation between y_t and y_{t-1}, r_2 capturing the relationship between y_t and y_{t-2}, and so forth. The formula to calculate the autocorrelation at lag k is:\n\nr_k = \\frac{\\sum_{t=k+1}^T (y_t - \\bar{y})(y_{t-k} - \\bar{y})}{\\sum_{t=1}^T (y_t - \\bar{y})^2},\n\nwhere T denotes the length of the time series, and \\bar{y} is the mean of the series. The set of autocorrelation coefficients for various lags forms the autocorrelation function (ACF), which helps identify patterns and dependencies in the data.\nHowever, an ACF plot can sometimes be misleading. For example, if y_t and y_{t-1} are correlated, then y_t and y_{t-2} may also appear correlated—not due to new information in y_{t-2}, but simply because both are related to y_{t-1}. This can create a chain of dependencies that may not accurately reflect the unique influence of each lag.\nTo address this issue, we use partial autocorrelations, which measure the relationship between y_t and y_{t-k} after controlling for the influence of intermediate lags (1 through k-1). The first partial autocorrelation is the same as the first autocorrelation, as there are no intervening lags to account for. Each subsequent partial autocorrelation isolates the direct effect of that specific lag, removing the influence of shorter lags. In an autoregressive model, each partial autocorrelation can be estimated as the final coefficient in an AR model of that order. Specifically, the kth partial autocorrelation, \\alpha_k, corresponds to the coefficient \\phi_k in an AR(k) model.\nThis refined approach gives us the partial autocorrelation function (PACF), which provides a clearer picture of the direct relationships between values at specific lags, making it a valuable tool for model selection and interpretation in time series analysis.\n\narma_processes %&gt;% \n  gg_tsdisplay(\n    arma10, \n    plot_type = \"partial\", \n    lag_max = 12\n    )\n\n\n\n\n\n\n\narma_processes %&gt;%\n  gg_tsdisplay(\n    arma01, \n    plot_type = \"partial\", \n    lag_max = 12\n    )\n\n\n\n\n\n\n\narma_processes %&gt;% \n  gg_tsdisplay(\n    arma11, \n    plot_type = \"partial\", \n    lag_max = 12\n    )\n\n\n\n\n\n\n\n\nFor data following an ARIMA model with either AR terms (ARIMA(p, d, 0)) or MA terms (ARIMA(0, d, q)), the ACF and PACF plots can assist in identifying the appropriate values of p or q. When both parameters are positive, however, the plots may not distinctly guide the selection of these values.\nTo identify an ARIMA(p, d, 0) model, check the ACF and PACF plots of the differenced series for these patterns:\n\nThe ACF shows an exponentially decaying or sinusoidal trend.\nThe PACF displays a significant spike at lag p, with minimal activity beyond this point.\n\nIn contrast, data may fit an ARIMA(0, d, q) model if the ACF and PACF of the differenced series reveal:\n\nAn exponentially decaying or sinusoidal pattern in the PACF.\nA distinct spike at lag q in the ACF, with no significant lags thereafter.\n\nThese patterns help differentiate between autoregressive and moving average components in the time series, making model identification clearer."
+  },
+  {
+    "objectID": "day1_part4_arima.html#sp500-daily-returns",
+    "href": "day1_part4_arima.html#sp500-daily-returns",
+    "title": "Day 1 Part 4: ARIMA Modelling",
+    "section": "SP500 Daily Returns",
+    "text": "SP500 Daily Returns\nDownload and analyze SP500 daily returns. We use the S&P 500 index to study real-world time series data, which is useful for understanding the practical application of ARIMA modeling.\n\nsp500_returns &lt;- \n  download_data(\n    \"stock_prices\", \n    symbols = \"^GSPC\", \n    start = \"2010-01-01\", \n    end = \"2019-12-31\"\n  ) %&gt;% \n  rename(price = adjusted_close) %&gt;% \n  select(symbol, date, price) %&gt;% \n  mutate(\n    date = row_number(),\n    lprice = log(price),\n    lreturn = difference(lprice)\n  ) %&gt;% \n  remove_missing() %&gt;% \n  as_tsibble(index = date) %&gt;% \n  glimpse()\n\nWarning: Removed 1 row containing missing values or values outside the scale\nrange.\n\n\nRows: 2,514\nColumns: 5\n$ symbol  &lt;chr&gt; \"^GSPC\", \"^GSPC\", \"^GSPC\", \"^GSPC\", \"^GSPC\", \"^GSPC\", \"^GSPC\",…\n$ date    &lt;int&gt; 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19…\n$ price   &lt;dbl&gt; 1136.52, 1137.14, 1141.69, 1144.98, 1146.98, 1136.22, 1145.68,…\n$ lprice  &lt;dbl&gt; 7.035726, 7.036272, 7.040265, 7.043142, 7.044888, 7.035462, 7.…\n$ lreturn &lt;dbl&gt; 0.0031108320, 0.0005453719, 0.0039932184, 0.0028775831, 0.0017…\n\n\n\nExplore Log Prices\nExplore and visualize the log-transformed prices of the S&P 500. The log transformation helps stabilize variance and allows us to focus on percentage changes.\n\nsp500_returns %&gt;% \n  gg_tsdisplay(\n    lprice, \n    plot_type = \"partial\", \n    lag_max = 12\n    )\n\n\n\n\n\n\n\nsp500_returns %&gt;% \n  autoplot(.vars = lprice)\n\n\n\n\n\n\n\n\n\n\nPerform Stationarity Tests\nConduct stationarity tests on the log prices to determine if differencing is required. Stationarity is crucial in ARIMA modeling as non-stationary data can lead to misleading results.\n\nsp500_returns %&gt;% \n  features(lprice, unitroot_kpss)\n\n# A tibble: 1 × 2\n  kpss_stat kpss_pvalue\n      &lt;dbl&gt;       &lt;dbl&gt;\n1      27.2        0.01\n\nsp500_returns %&gt;% \n  features(lprice, unitroot_ndiffs)\n\n# A tibble: 1 × 1\n  ndiffs\n   &lt;int&gt;\n1      1\n\n\n\n\nExplore Log Returns\nVisualize the log returns of the S&P 500 and conduct further tests.\n\nsp500_returns %&gt;% \n  autoplot(.vars = lreturn)\n\n\n\n\n\n\n\nsp500_returns %&gt;% \n  features(lreturn, ljung_box, lag = 12)\n\n# A tibble: 1 × 2\n  lb_stat lb_pvalue\n    &lt;dbl&gt;     &lt;dbl&gt;\n1    29.8   0.00300\n\nsp500_returns %&gt;% \n  gg_tsdisplay(lreturn, plot_type = \"partial\", lag_max = 12)"
+  },
+  {
+    "objectID": "day1_part4_arima.html#fit-arima-models",
+    "href": "day1_part4_arima.html#fit-arima-models",
+    "title": "Day 1 Part 4: ARIMA Modelling",
+    "section": "Fit ARIMA Models",
+    "text": "Fit ARIMA Models\nFit manual and automatic ARIMA models to the S&P 500 log returns. This step demonstrates how to specify ARIMA models manually and automatically using R’s modeling capabilities.\n\nManual ARIMA Model\nFit a manual ARIMA model with specified parameters. This approach allows us to control the AR and MA components directly, providing insights into model specification and parameter estimation.\n\nmodel_manual &lt;- \n  sp500_returns %&gt;% \n  remove_missing() %&gt;% \n  model(arima = ARIMA(lreturn ~ pdq(5,0,1)))\n\n\nmodel_manual %&gt;% report()\n\nSeries: lreturn \nModel: ARIMA(5,0,1) w/ mean \n\nCoefficients:\n          ar1     ar2      ar3      ar4      ar5      ma1  constant\n      -0.0228  0.0034  -0.0366  -0.0146  -0.0786  -0.0246     5e-04\ns.e.   0.2172  0.0222   0.0199   0.0214   0.0200   0.2176     2e-04\n\nsigma^2 estimated as 8.619e-05:  log likelihood=8200.41\nAIC=-16384.82   AICc=-16384.76   BIC=-16338.19\n\nmodel_manual %&gt;% gg_tsresiduals(lag_max = 12)\n\n\n\n\n\n\n\n\n\n\nAutomatic ARIMA Model\nFit an automatic ARIMA model using R’s built-in selection algorithms. This approach finds the best ARIMA model by optimizing information criteria, making it useful for practical applications.\n\nmodel_auto &lt;- \n  sp500_returns %&gt;% \n  remove_missing() %&gt;%\n  model(arima = ARIMA(lreturn))\nmodel_auto %&gt;% report() %&gt;% coef()\n\nSeries: lreturn \nModel: ARIMA(2,0,2) w/ mean \n\nCoefficients:\n         ar1     ar2      ma1      ma2  constant\n      0.1606  0.7838  -0.2092  -0.7678         0\ns.e.  0.1222  0.1156   0.1301   0.1266         0\n\nsigma^2 estimated as 8.626e-05:  log likelihood=8198.37\nAIC=-16384.75   AICc=-16384.72   BIC=-16349.77\n\n\n# A tibble: 5 × 6\n  .model term       estimate  std.error statistic  p.value\n  &lt;chr&gt;  &lt;chr&gt;         &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;\n1 arima  ar1       0.161     0.122           1.31 1.89e- 1\n2 arima  ar2       0.784     0.116           6.78 1.48e-11\n3 arima  ma1      -0.209     0.130          -1.61 1.08e- 1\n4 arima  ma2      -0.768     0.127          -6.06 1.53e- 9\n5 arima  constant  0.0000231 0.00000447      5.16 2.71e- 7\n\nmodel_auto %&gt;% gg_tsresiduals(lag_max = 12)\n\n\n\n\n\n\n\n\n\n\nCompare Data and Fitted Values\nCompare the actual log returns with the fitted values from the ARIMA model. This helps us assess the model’s performance in capturing the dynamics of the data.\n\nmodel_auto %&gt;% \n  augment() %&gt;% \n  ggplot(aes(date)) + \n  geom_line(aes(y = lreturn, color = \"Data\")) + \n  geom_line(aes(y = .fitted, color = \"Fitted\")) +\n  scale_colour_manual(values = c(Data = \"black\", Fitted = \"#D55E00\")) +\n  guides(colour = guide_legend(title = NULL))\n\n\n\n\n\n\n\n\n\n\nForecast ARIMA Model\nForecast future values using the fitted ARIMA model. Forecasting is a key aspect of ARIMA models, and this step illustrates the model’s ability to predict future log returns.\n\nmodel_auto %&gt;% \n  forecast(h = 4) %&gt;% \n  autoplot(sp500_returns %&gt;% tail(52))"
+  },
+  {
+    "objectID": "day1_part4_arima.html#additional-useful-functions",
+    "href": "day1_part4_arima.html#additional-useful-functions",
+    "title": "Day 1 Part 4: ARIMA Modelling",
+    "section": "Additional Useful Functions",
+    "text": "Additional Useful Functions\nExplore additional functions for analyzing the fitted ARIMA models. These functions provide detailed diagnostics, coefficients, and model accuracy metrics, helping to understand model fit and performance.\n\nmodel_manual %&gt;% coef()\n\n# A tibble: 7 × 6\n  .model term      estimate std.error statistic   p.value\n  &lt;chr&gt;  &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;\n1 arima  ar1      -0.0228    0.217       -0.105 0.917    \n2 arima  ar2       0.00340   0.0222       0.153 0.878    \n3 arima  ar3      -0.0366    0.0199      -1.84  0.0656   \n4 arima  ar4      -0.0146    0.0214      -0.683 0.495    \n5 arima  ar5      -0.0786    0.0200      -3.93  0.0000876\n6 arima  ma1      -0.0246    0.218       -0.113 0.910    \n7 arima  constant  0.000477  0.000182     2.62  0.00881  \n\nmodel_manual %&gt;% glance()\n\n# A tibble: 1 × 8\n  .model    sigma2 log_lik     AIC    AICc     BIC ar_roots  ma_roots \n  &lt;chr&gt;      &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;list&gt;    &lt;list&gt;   \n1 arima  0.0000862   8200. -16385. -16385. -16338. &lt;cpl [5]&gt; &lt;cpl [1]&gt;\n\nmodel_manual %&gt;% report()\n\nSeries: lreturn \nModel: ARIMA(5,0,1) w/ mean \n\nCoefficients:\n          ar1     ar2      ar3      ar4      ar5      ma1  constant\n      -0.0228  0.0034  -0.0366  -0.0146  -0.0786  -0.0246     5e-04\ns.e.   0.2172  0.0222   0.0199   0.0214   0.0200   0.2176     2e-04\n\nsigma^2 estimated as 8.619e-05:  log likelihood=8200.41\nAIC=-16384.82   AICc=-16384.76   BIC=-16338.19\n\nmodel_manual %&gt;% fitted()\n\n# A tsibble: 2,514 x 3 [1]\n# Key:       .model [1]\n   .model  date    .fitted\n   &lt;chr&gt;  &lt;int&gt;      &lt;dbl&gt;\n 1 arima      2  0.000428 \n 2 arima      3  0.000291 \n 3 arima      4  0.000441 \n 4 arima      5  0.000162 \n 5 arima      6  0.000287 \n 6 arima      7  0.0000122\n 7 arima      8  0.000723 \n 8 arima      9 -0.000350 \n 9 arima     10  0.000475 \n10 arima     11  0.000709 \n# ℹ 2,504 more rows\n\nmodel_manual %&gt;% residuals()\n\n# A tsibble: 2,514 x 3 [1]\n# Key:       .model [1]\n   .model  date    .resid\n   &lt;chr&gt;  &lt;int&gt;     &lt;dbl&gt;\n 1 arima      2  0.00268 \n 2 arima      3  0.000255\n 3 arima      4  0.00355 \n 4 arima      5  0.00272 \n 5 arima      6  0.00146 \n 6 arima      7 -0.00944 \n 7 arima      8  0.00757 \n 8 arima      9  0.00277 \n 9 arima     10 -0.0114  \n10 arima     11  0.0117  \n# ℹ 2,504 more rows\n\nmodel_manual %&gt;% accuracy()\n\n# A tibble: 1 × 10\n  .model .type            ME    RMSE     MAE   MPE  MAPE  MASE RMSSE       ACF1\n  &lt;chr&gt;  &lt;chr&gt;         &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;\n1 arima  Training 0.00000121 0.00927 0.00638   Inf   Inf 0.673 0.688 -0.0000307"
+  },
+  {
+    "objectID": "day1_part4_arima.html#preview-of-volatility-processes",
+    "href": "day1_part4_arima.html#preview-of-volatility-processes",
+    "title": "Day 1 Part 4: ARIMA Modelling",
+    "section": "Preview of Volatility Processes",
+    "text": "Preview of Volatility Processes\nIn time series analysis, understanding and visualizing volatility—fluctuations in a time series’ variability—is crucial, especially in financial contexts. The code snippet below provides a preview of volatility in S&P 500 returns by focusing on the squared log returns. By squaring the log returns (lreturn^2), we create a series (lreturn_sq) that emphasizes periods of high variability, since squaring amplifies larger values (indicative of more volatile periods) while diminishing smaller fluctuations.\n\nsp500_returns %&gt;% \n  mutate(lreturn_sq = lreturn^2) %&gt;% \n  autoplot(.vars=lreturn_sq)\n\n\n\n\n\n\n\n\nThis squared log-return series is then visualized using autoplot, offering a clear depiction of volatility clustering: periods where high or low variability tends to persist. Observing these clusters is valuable, as it reveals underlying patterns of market behavior that can inform the selection and calibration of models like ARIMA or other volatility-focused models."
+  },
+  {
+    "objectID": "day1_part3_random_walks.html",
+    "href": "day1_part3_random_walks.html",
+    "title": "Day 1 Part 3: Random Walks",
+    "section": "",
+    "text": "Load necessary libraries for data manipulation, finance data, and time-series analysis. These libraries will enable us to generate, visualize, and analyze random walks, which are fundamental to understanding stochastic processes in time series econometrics.\n\nlibrary(tidyverse)\nlibrary(tidyfinance)\nlibrary(tsibble)\nlibrary(fable)\nlibrary(feasts)\nlibrary(scales)\nlibrary(fixest)"
+  },
+  {
+    "objectID": "day1_part3_random_walks.html#load-libraries",
+    "href": "day1_part3_random_walks.html#load-libraries",
+    "title": "Day 1 Part 3: Random Walks",
+    "section": "",
+    "text": "Load necessary libraries for data manipulation, finance data, and time-series analysis. These libraries will enable us to generate, visualize, and analyze random walks, which are fundamental to understanding stochastic processes in time series econometrics.\n\nlibrary(tidyverse)\nlibrary(tidyfinance)\nlibrary(tsibble)\nlibrary(fable)\nlibrary(feasts)\nlibrary(scales)\nlibrary(fixest)"
+  },
+  {
+    "objectID": "day1_part3_random_walks.html#illustrating-a-random-walk",
+    "href": "day1_part3_random_walks.html#illustrating-a-random-walk",
+    "title": "Day 1 Part 3: Random Walks",
+    "section": "Illustrating a Random Walk",
+    "text": "Illustrating a Random Walk\nGenerate and visualize a single random walk. A random walk is a simple but important stochastic process used in time series analysis to model variables whose changes are entirely unpredictable. Here, we simulate a single random walk to understand its behavior.\nMathematically, a random walk can be represented as:\n y_t = y_{t-1} + e_t \nwhere e_t is white noise, typically assumed to be normally distributed with mean zero and constant variance. The difference between consecutive values, y_t - y_{t-1} = e_t, is white noise, which implies that the changes in a random walk are completely random and unpredictable.\n\nsteps &lt;- 100\ne &lt;- rnorm(steps)\ny &lt;- e\ncoef &lt;- 1\ndrift = 0\n\nplot(e, type=\"l\")\n\n\n\n\n\n\n\nfor (i in 2:steps) {\n  y[i] &lt;- drift + coef*y[i-1] + e[i]\n}\n\nplot(y, type=\"l\")"
+  },
+  {
+    "objectID": "day1_part3_random_walks.html#multiple-random-walks",
+    "href": "day1_part3_random_walks.html#multiple-random-walks",
+    "title": "Day 1 Part 3: Random Walks",
+    "section": "Multiple Random Walks",
+    "text": "Multiple Random Walks\nGenerate and visualize multiple random walks. Generating multiple random walks allows us to explore the variability between different realizations of the process, illustrating the concept of stochasticity and highlighting the random nature of these paths.\n\nn_random_walks &lt;- 30\n\ncreate_random_walk &lt;- \n  function(random_walk_no, steps = 100, n_random_walks = 30) {\n    \n    innovations &lt;- \n      tibble(\n        random_walk_no, \n        step = 1:steps,\n        e = rnorm(steps)\n      ) \n    \n    random_walk &lt;- \n      innovations %&gt;% \n        mutate(\n          random_walk = cumsum(e),\n          random_walk_no = factor(random_walk_no, 1:n_random_walks)\n        )\n    \n    return(random_walk)\n  }\n\nrandom_walks &lt;- \n  1:n_random_walks %&gt;%  \n    map(~create_random_walk(.)) %&gt;% \n    list_rbind()\n\nrandom_walks %&gt;% \n  ggplot(aes(x = step, y = random_walk, color = random_walk_no)) +\n  geom_line()"
+  },
+  {
+    "objectID": "day1_part3_random_walks.html#analysis-of-a-single-random-walk",
+    "href": "day1_part3_random_walks.html#analysis-of-a-single-random-walk",
+    "title": "Day 1 Part 3: Random Walks",
+    "section": "Analysis of a Single Random Walk",
+    "text": "Analysis of a Single Random Walk\nAnalyze a single random walk with a lag variable. Here, we analyze the properties of a single random walk by estimating a regression with a lagged variable. This helps us understand if past values of the walk can predict future values, which is key to determining whether the series is truly a random walk.\n\nrandom_walk_1 &lt;- \n  random_walks %&gt;% \n  filter(random_walk_no == 1) %&gt;% \n  mutate(random_walk_lag = lag(random_walk)) %&gt;% \n  remove_missing() %&gt;% \n  print()\n\nWarning: Removed 1 row containing missing values or values outside the scale\nrange.\n\n\n# A tibble: 99 × 5\n   random_walk_no  step       e random_walk random_walk_lag\n   &lt;fct&gt;          &lt;int&gt;   &lt;dbl&gt;       &lt;dbl&gt;           &lt;dbl&gt;\n 1 1                  2  0.313        0.298         -0.0152\n 2 1                  3 -1.32        -1.03           0.298 \n 3 1                  4 -0.428       -1.45          -1.03  \n 4 1                  5 -0.0534      -1.51          -1.45  \n 5 1                  6 -0.332       -1.84          -1.51  \n 6 1                  7 -1.40        -3.24          -1.84  \n 7 1                  8  1.89        -1.35          -3.24  \n 8 1                  9 -0.575       -1.92          -1.35  \n 9 1                 10 -0.327       -2.25          -1.92  \n10 1                 11  1.92        -0.333         -2.25  \n# ℹ 89 more rows\n\n\nNext, we estimate the following regression equation:\n y_t = \\beta y_{t-1} + \\epsilon_t \nwhere y_t is the value of the random walk at time t, y_{t-1} is the lagged value at time t-1, \\beta is the estimated coefficient, and \\epsilon_t is the residual (error term). In this case, there is no intercept term, which is why the regression formula includes -1 to remove the intercept.\n\nest &lt;- feols(random_walk ~ random_walk_lag - 1, data = random_walk_1)\netable(est)\n\n                              est\nDependent Var.:       random_walk\n                                 \nrandom_walk_lag 1.008*** (0.0077)\n_______________ _________________\nS.E. type                     IID\nObservations                   99\nR2                        0.98021\nAdj. R2                   0.98021\n---\nSignif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\nNote that the estimate of \\beta is less than one due to the finite sample bias associated with unit root processes. This bias, often called the “small sample bias,” arises because of the non-stationary nature of a unit root process, causing the estimated \\beta to be slightly lower than its true value of 1 in most realizations."
+  },
+  {
+    "objectID": "day1_part3_random_walks.html#monte-carlo-simulation-of-random-walks",
+    "href": "day1_part3_random_walks.html#monte-carlo-simulation-of-random-walks",
+    "title": "Day 1 Part 3: Random Walks",
+    "section": "Monte Carlo Simulation of Random Walks",
+    "text": "Monte Carlo Simulation of Random Walks\nSimulate a large number of random walks and estimate coefficients. Monte Carlo simulations allow us to repeatedly generate random walks and estimate their coefficients to understand the distribution of these coefficients. This is important for understanding the statistical properties of random walks and verifying theoretical expectations.\n\nrandom_walks &lt;- \n  1:10^3 %&gt;%  \n  map(~create_random_walk(.)) %&gt;% \n  list_rbind() %&gt;% \n  group_by(random_walk_no) %&gt;% \n  mutate(random_walk_lag = lag(random_walk)) %&gt;% \n  remove_missing() %&gt;% \n  nest() %&gt;% \n  mutate(\n    est = map(data, ~feols(random_walk ~ random_walk_lag - 1, data = .)),\n    coef = map(est, ~.$coefficients)\n  ) %&gt;% \n  unnest(cols = coef) %&gt;% \n  ungroup()\n\nWarning: Removed 97030 rows containing missing values or values outside the\nscale range.\n\nrandom_walks\n\n# A tibble: 30 × 4\n   random_walk_no data              est       coef\n   &lt;fct&gt;          &lt;list&gt;            &lt;list&gt;   &lt;dbl&gt;\n 1 1              &lt;tibble [99 × 4]&gt; &lt;fixest&gt; 1.01 \n 2 2              &lt;tibble [99 × 4]&gt; &lt;fixest&gt; 0.974\n 3 3              &lt;tibble [99 × 4]&gt; &lt;fixest&gt; 1.00 \n 4 4              &lt;tibble [99 × 4]&gt; &lt;fixest&gt; 1.01 \n 5 5              &lt;tibble [99 × 4]&gt; &lt;fixest&gt; 0.951\n 6 6              &lt;tibble [99 × 4]&gt; &lt;fixest&gt; 0.934\n 7 7              &lt;tibble [99 × 4]&gt; &lt;fixest&gt; 0.996\n 8 8              &lt;tibble [99 × 4]&gt; &lt;fixest&gt; 0.989\n 9 9              &lt;tibble [99 × 4]&gt; &lt;fixest&gt; 0.988\n10 10             &lt;tibble [99 × 4]&gt; &lt;fixest&gt; 0.995\n# ℹ 20 more rows"
+  },
+  {
+    "objectID": "day1_part3_random_walks.html#summary-of-coefficients",
+    "href": "day1_part3_random_walks.html#summary-of-coefficients",
+    "title": "Day 1 Part 3: Random Walks",
+    "section": "Summary of Coefficients",
+    "text": "Summary of Coefficients\nSummarize and visualize the distribution of estimated coefficients. Summarizing the coefficients from the Monte Carlo simulations allows us to visualize the typical behavior of the estimated relationships in random walks, such as their average and variability. This can help us draw conclusions about the nature of randomness and persistence in these series.\n\ncoef_mean &lt;- random_walks %&gt;% summarise(coef_mean = mean(coef)) %&gt;% pull(coef_mean)\n\nrandom_walks %&gt;% \n  ggplot(aes(coef)) + \n  geom_density() + \n  geom_vline(xintercept = coef_mean, linetype = \"dashed\", color = \"red\") +\n  geom_vline(xintercept = 1, linetype = \"twodash\", color = \"navy\") +\n  scale_x_continuous(\n    breaks = c(coef_mean, 1),\n    labels = c(\"coef_mean\" = \"mean estimate\", \"1\" = \"1 (true)\")\n  )"
+  },
+  {
+    "objectID": "day1_part2_time_series_data.html",
+    "href": "day1_part2_time_series_data.html",
+    "title": "Day 1 Part 2: Exploring Time Series Data",
+    "section": "",
+    "text": "Load necessary libraries for data manipulation, finance data, and time-series analysis. These packages will enable sophisticated econometric analysis, such as stationarity checks, model fitting, and forecasting of financial time series data. These libraries will allow us to efficiently handle and visualize time series data, perform statistical analysis, and work with financial datasets.\n\nlibrary(tidyverse)\nlibrary(tidyfinance)\nlibrary(tsibble)\nlibrary(fable)\nlibrary(feasts)\nlibrary(scales)"
+  },
+  {
+    "objectID": "day1_part2_time_series_data.html#load-libraries",
+    "href": "day1_part2_time_series_data.html#load-libraries",
+    "title": "Day 1 Part 2: Exploring Time Series Data",
+    "section": "",
+    "text": "Load necessary libraries for data manipulation, finance data, and time-series analysis. These packages will enable sophisticated econometric analysis, such as stationarity checks, model fitting, and forecasting of financial time series data. These libraries will allow us to efficiently handle and visualize time series data, perform statistical analysis, and work with financial datasets.\n\nlibrary(tidyverse)\nlibrary(tidyfinance)\nlibrary(tsibble)\nlibrary(fable)\nlibrary(feasts)\nlibrary(scales)"
+  },
+  {
+    "objectID": "day1_part2_time_series_data.html#download-apple-stock-data",
+    "href": "day1_part2_time_series_data.html#download-apple-stock-data",
+    "title": "Day 1 Part 2: Exploring Time Series Data",
+    "section": "Download Apple Stock Data",
+    "text": "Download Apple Stock Data\nDownload Apple stock prices from 2010 to 2020 and inspect the data. This time series will be used to explore stock price dynamics, perform volatility analysis, and conduct model estimation for financial econometric purposes. This data will help us understand Apple’s historical performance and serve as the foundation for our time-series analysis.\n\nAAPL &lt;- \n  download_data(\n    \"stock_prices\", \n    symbols = \"AAPL\", \n    start = \"2010-01-01\", \n    end = \"2020-01-01\"\n  )\n\nAAPL %&gt;% glimpse()\n\nRows: 2,516\nColumns: 8\n$ symbol         &lt;chr&gt; \"AAPL\", \"AAPL\", \"AAPL\", \"AAPL\", \"AAPL\", \"AAPL\", \"AAPL\",…\n$ date           &lt;date&gt; 2010-01-04, 2010-01-05, 2010-01-06, 2010-01-07, 2010-0…\n$ volume         &lt;dbl&gt; 493729600, 601904800, 552160000, 477131200, 447610800, …\n$ open           &lt;dbl&gt; 7.622500, 7.664286, 7.656429, 7.562500, 7.510714, 7.600…\n$ low            &lt;dbl&gt; 7.585000, 7.616071, 7.526786, 7.466071, 7.466429, 7.444…\n$ high           &lt;dbl&gt; 7.660714, 7.699643, 7.686786, 7.571429, 7.571429, 7.607…\n$ close          &lt;dbl&gt; 7.643214, 7.656429, 7.534643, 7.520714, 7.570714, 7.503…\n$ adjusted_close &lt;dbl&gt; 6.447412, 6.458559, 6.355829, 6.344079, 6.386256, 6.329…"
+  },
+  {
+    "objectID": "day1_part2_time_series_data.html#prepare-closing-price-data",
+    "href": "day1_part2_time_series_data.html#prepare-closing-price-data",
+    "title": "Day 1 Part 2: Exploring Time Series Data",
+    "section": "Prepare Closing Price Data",
+    "text": "Prepare Closing Price Data\nRename and organize closing prices, converting the data into a tsibble. The tsibble structure will allow for the application of time series econometric methods, such as differentiation and model specification, by leveraging its temporal index. A tsibble is a specialized time-series data format in R, which allows us to perform various time-based operations more easily.\n\nclosing_price &lt;- \n  AAPL %&gt;% \n  rename(price = adjusted_close) %&gt;% \n  select(symbol, date, price) %&gt;% \n  as_tsibble(\n    index = date, \n    regular = FALSE\n  ) %&gt;% \n  glimpse()\n\nRows: 2,516\nColumns: 3\n$ symbol &lt;chr&gt; \"AAPL\", \"AAPL\", \"AAPL\", \"AAPL\", \"AAPL\", \"AAPL\", \"AAPL\", \"AAPL\",…\n$ date   &lt;date&gt; 2010-01-04, 2010-01-05, 2010-01-06, 2010-01-07, 2010-01-08, 20…\n$ price  &lt;dbl&gt; 6.447412, 6.458559, 6.355829, 6.344079, 6.386256, 6.329919, 6.2…"
+  },
+  {
+    "objectID": "day1_part2_time_series_data.html#calculate-logarithmic-returns",
+    "href": "day1_part2_time_series_data.html#calculate-logarithmic-returns",
+    "title": "Day 1 Part 2: Exploring Time Series Data",
+    "section": "Calculate Logarithmic Returns",
+    "text": "Calculate Logarithmic Returns\nCalculate the log of prices and the daily log returns. Logarithmic returns are useful for time series econometrics because they stabilize variance over time and allow additive decomposition of returns, simplifying the model estimation and analysis. Log returns are commonly used in finance to better capture the relative change in prices and handle the compounding nature of returns.\n\nlog_returns &lt;- \n  closing_price %&gt;% \n  mutate(\n    lprice = log(price),\n    lreturn = difference(lprice, lag = 1, differences = 1)\n  ) %&gt;% \n  glimpse()\n\nRows: 2,516\nColumns: 5\n$ symbol  &lt;chr&gt; \"AAPL\", \"AAPL\", \"AAPL\", \"AAPL\", \"AAPL\", \"AAPL\", \"AAPL\", \"AAPL\"…\n$ date    &lt;date&gt; 2010-01-04, 2010-01-05, 2010-01-06, 2010-01-07, 2010-01-08, 2…\n$ price   &lt;dbl&gt; 6.447412, 6.458559, 6.355829, 6.344079, 6.386256, 6.329919, 6.…\n$ lprice  &lt;dbl&gt; 1.863679, 1.865406, 1.849372, 1.847522, 1.854148, 1.845287, 1.…\n$ lreturn &lt;dbl&gt; NA, 0.001727421, -0.016033853, -0.001850443, 0.006626351, -0.0…"
+  },
+  {
+    "objectID": "day1_part2_time_series_data.html#visualize-prices-and-returns",
+    "href": "day1_part2_time_series_data.html#visualize-prices-and-returns",
+    "title": "Day 1 Part 2: Exploring Time Series Data",
+    "section": "Visualize Prices and Returns",
+    "text": "Visualize Prices and Returns\n\nPrice Over Time\nThis plot will show the trend of Apple’s stock price over the given period, providing an overview of its growth or decline. This visualization is crucial for identifying non-stationarity, potential structural breaks, and trends that may necessitate differencing before model fitting.\n\nlog_returns %&gt;% autoplot(.vars = price)\n\n\n\n\n\n\n\n\n\n\nLog Price Over Time\nThe log price plot allows us to visualize the price changes on a logarithmic scale, which is useful for observing relative growth. This transformation helps in linearizing exponential growth patterns, making it more appropriate for econometric modeling and reducing potential heteroskedasticity.\n\nlog_returns %&gt;% autoplot(.vars = lprice)\n\n\n\n\n\n\n\n\n\n\nLog Returns Over Time\nThis plot will depict the daily log returns, highlighting the variability and volatility of Apple’s stock over time. Examining log returns over time can reveal volatility clustering, a common feature in financial time series that will inform our choice of econometric models, such as GARCH.\n\nlog_returns %&gt;% autoplot(.vars = lreturn)\n\nWarning: Removed 1 row containing missing values or values outside the scale range\n(`geom_line()`)."
+  },
+  {
+    "objectID": "day1_part2_time_series_data.html#quantile-analysis",
+    "href": "day1_part2_time_series_data.html#quantile-analysis",
+    "title": "Day 1 Part 2: Exploring Time Series Data",
+    "section": "Quantile Analysis",
+    "text": "Quantile Analysis\nCalculate the 5th percentile of daily log returns. The 5th percentile is often used in Value at Risk (VaR) calculations to assess the potential downside risk in holding the asset over a given time frame. The 5th percentile helps us understand the lower tail of the return distribution, indicating extreme negative returns that could represent risk scenarios.\n\nquantile_05 &lt;- \n  quantile(\n    log_returns %&gt;% \n      remove_missing() %&gt;% \n      pull(lreturn), \n    probs = 0.05\n  )\n\nWarning: Removed 1 row containing missing values or values outside the scale\nrange.\n\nquantile_05\n\n         5% \n-0.02531909"
+  },
+  {
+    "objectID": "day1_part2_time_series_data.html#plot-distribution-of-daily-returns",
+    "href": "day1_part2_time_series_data.html#plot-distribution-of-daily-returns",
+    "title": "Day 1 Part 2: Exploring Time Series Data",
+    "section": "Plot Distribution of Daily Returns",
+    "text": "Plot Distribution of Daily Returns\nPlot a histogram of daily log returns with a dashed line for the 5th percentile. Understanding the distribution of returns is critical for time series modeling, as it informs the assumptions of normality or fat tails, which are essential for selecting appropriate econometric models. The histogram gives us a visual representation of the return distribution, while the dashed line indicates the 5th percentile, helping us identify the risk threshold.\n\nlog_returns %&gt;% \n  ggplot(aes(x = lreturn)) +\n  geom_histogram(bins = 100) +\n  geom_vline(aes(xintercept = quantile_05),\n             linetype = \"dashed\"\n  ) +\n  labs(\n    x = NULL,\n    y = NULL,\n    title = \"Distribution of daily Apple stock returns\"\n  ) +\n  scale_x_continuous(labels = percent)\n\nWarning: Removed 1 row containing non-finite outside the scale range\n(`stat_bin()`)."
+  },
+  {
+    "objectID": "day1_part2_time_series_data.html#aggregate-weekly-log-returns",
+    "href": "day1_part2_time_series_data.html#aggregate-weekly-log-returns",
+    "title": "Day 1 Part 2: Exploring Time Series Data",
+    "section": "Aggregate Weekly Log Returns",
+    "text": "Aggregate Weekly Log Returns\nSummarize log returns by week and plot the results. Aggregating returns to a weekly level can help mitigate the noise inherent in daily data and better reveal underlying cyclical patterns, which can be relevant for macroeconomic linkages. Aggregating returns by week helps smooth out daily fluctuations and provides a clearer picture of the overall trend.\n\nlog_returns_weekly &lt;- \n  log_returns %&gt;% \n    index_by(yearweek = ~yearweek(.)) %&gt;% \n    summarise(lreturn = sum(lreturn)) %&gt;% \n    glimpse()\n\nRows: 522\nColumns: 2\n$ yearweek &lt;week&gt; 2010 W01, 2010 W02, 2010 W03, 2010 W04, 2010 W05, 2010 W06, …\n$ lreturn  &lt;dbl&gt; NA, -0.028956123, -0.040532602, -0.029195578, 0.017547946, 0.…\n\nlog_returns_weekly %&gt;% autoplot()\n\nPlot variable not specified, automatically selected `.vars = lreturn`\n\n\nWarning: Removed 1 row containing missing values or values outside the scale range\n(`geom_line()`)."
+  },
+  {
+    "objectID": "day1_part2_time_series_data.html#aggregate-monthly-log-returns",
+    "href": "day1_part2_time_series_data.html#aggregate-monthly-log-returns",
+    "title": "Day 1 Part 2: Exploring Time Series Data",
+    "section": "Aggregate Monthly Log Returns",
+    "text": "Aggregate Monthly Log Returns\nSummarize log returns by month and plot the results. Monthly aggregation is useful for analyzing longer-term trends and understanding seasonality, which are key considerations in time series econometric models, such as ARIMA. Monthly aggregation allows us to observe long-term patterns and seasonal trends in Apple’s stock performance.\n\nlog_returns_monthly &lt;- \n  log_returns %&gt;% \n    index_by(yearmonth = ~yearmonth(.)) %&gt;% \n    summarise(lreturn = sum(lreturn)) %&gt;% \n    glimpse()\n\nRows: 120\nColumns: 2\n$ yearmonth &lt;mth&gt; 2010 Jan, 2010 Feb, 2010 Mar, 2010 Apr, 2010 May, 2010 Jun, …\n$ lreturn   &lt;dbl&gt; NA, 0.063346791, 0.138430932, 0.105279751, -0.016256382, -0.…\n\nlog_returns_monthly %&gt;% autoplot()\n\nPlot variable not specified, automatically selected `.vars = lreturn`\n\n\nWarning: Removed 1 row containing missing values or values outside the scale range\n(`geom_line()`)."
+  },
+  {
+    "objectID": "downloads.html",
+    "href": "downloads.html",
+    "title": "Downloads",
+    "section": "",
+    "text": "Download all code here: day1_code.zip"
+  },
+  {
+    "objectID": "downloads.html#day-1",
+    "href": "downloads.html#day-1",
+    "title": "Downloads",
+    "section": "",
+    "text": "Download all code here: day1_code.zip"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Zero to Hero Bootcamp",
+    "section": "",
+    "text": "Workshop aims\nDay 1 of this workshop introduces participants to foundational concepts and techniques in time series analysis using R. It focuses on equipping attendees with practical skills for handling, analyzing and modeling time series data, with applications relevant to finance and economics.\nIndicative topics:\n\nAnalysis with Tidyverse\nExploring Time Series Data\nStationarity and Random Walks\nARIMA modelling\nPreview of volatility processes\n\n\n\nLearning outcomes\nBy the end of the first workshop day, participants will be able to:\n\nUse Tidyverse tools for data analysis in R\nExplore and visualize time series data effectively\nUnderstand and apply concepts of random walks and stationarity\nDevelop and interpret ARIMA models for forecasting\nGain insight into volatility processes\n\n\n\nWhere and when?\n\nDate: 16 November\nTime: 10:00-16:00\nLocation: WB-0001 (Google Maps Location)\n\n\n\nWhat to bring?\n\nYour own laptop\nInstallation of R and RStudio\n\nFor R, follow this link\nFor RStudio, follow this link\nOn Windows, also install RTools 4.4 from this link\n\nInstallation of R packages (details below)\n\nPlease prepare – all download and installation steps can take 1 hour, or longer! If you already have an installation, please update to newest version.\nAfter installing R, run this command:\n\nR.Version()\n\nAnd verify that your R Version is the following:\n\"R version 4.4.2 (2024-10-31)\"\n\"Pile of Leaves\"\nIn RStudio, verify that this is your version:\nVersion 2024.09.1+394 (2024.09.1+394)\nTo install the necessary packages, run this below code in RStudio:\n\nposit_repo &lt;- \n  \"https://packagemanager.posit.co/cran/latest\"\n\ninstall.packages(\n    \"renv\", \n    repos = posit_repo,\n    ask = FALSE,\n    dependencies = TRUE\n  )\n\nworkshop_packages &lt;- \n    c(\n      \"tidyverse\",\n      \"tsibble\",\n      \"feasts\",\n      \"fable\",\n      \"tsgarch\",\n      \"tidyfinance\",\n      \"httr2\",\n      \"fixest\",\n      \"flextable\",\n      \"xts\",\n      \"urca\"\n    )\n\nrenv::install(\n    workshop_packages, \n    repos = posit_repo, \n    dependencies = \"all\",\n    prompt = FALSE\n  )\n\n\n\nUseful resources\n\nTextbook: “Applied Econometric Time Series (3e)” by Walter Enders\nOnline book: Data Science for R\n\nChapter “Introduction”\nChapter “Whole Game”\n\nOnline book: Tidy Finance with R\n\nChapter “Accessing and Managing Financial Data”\n\nOnline book: Forecasting: Principles and Practice\n\nChapter 7: Time Series Regression Models\nChapter 9: ARIMA models\n\n\n\n\nQuestions?\nTwo options:\n\nPost on this Padlet (password: ts-workshop). This is the preferred option as there will be a lot of participants at the workshop.\nContact me at christian_engels@outlook.com. I may not be able to respond to all requests, but I will try my best!"
+  },
+  {
+    "objectID": "day1_part1_tidyverse.html",
+    "href": "day1_part1_tidyverse.html",
+    "title": "Day 1 Part 1: Analysis with Tidyverse",
+    "section": "",
+    "text": "Load necessary libraries for data manipulation, finance data, and time-series analysis. These libraries are essential for handling, transforming, and analyzing time series data, providing tools for visualization, statistical analysis, and econometric modeling.\n\nlibrary(tidyverse)\nlibrary(tidyfinance)\nlibrary(tsibble)\nlibrary(fable)"
+  },
+  {
+    "objectID": "day1_part1_tidyverse.html#load-libraries",
+    "href": "day1_part1_tidyverse.html#load-libraries",
+    "title": "Day 1 Part 1: Analysis with Tidyverse",
+    "section": "",
+    "text": "Load necessary libraries for data manipulation, finance data, and time-series analysis. These libraries are essential for handling, transforming, and analyzing time series data, providing tools for visualization, statistical analysis, and econometric modeling.\n\nlibrary(tidyverse)\nlibrary(tidyfinance)\nlibrary(tsibble)\nlibrary(fable)"
+  },
+  {
+    "objectID": "day1_part1_tidyverse.html#download-data",
+    "href": "day1_part1_tidyverse.html#download-data",
+    "title": "Day 1 Part 1: Analysis with Tidyverse",
+    "section": "Download Data",
+    "text": "Download Data\nDownload and print data from FRED for selected series: GDP and CPIAUCNS (Consumer Price Index). The Federal Reserve Economic Data (FRED) repository provides a rich source of economic time series data, which we can use to perform exploratory analysis and model economic trends.\n\nfred &lt;- download_data(\"fred\", series = c(\"GDP\", \"CPIAUCNS\"))\n\nNo `start_date` or `end_date` provided. Returning the full data set.\n\nfred\n\n# A tibble: 1,653 × 3\n   date       value series\n   &lt;date&gt;     &lt;dbl&gt; &lt;chr&gt; \n 1 1947-01-01  243. GDP   \n 2 1947-04-01  246. GDP   \n 3 1947-07-01  250. GDP   \n 4 1947-10-01  260. GDP   \n 5 1948-01-01  266. GDP   \n 6 1948-04-01  273. GDP   \n 7 1948-07-01  279. GDP   \n 8 1948-10-01  280. GDP   \n 9 1949-01-01  275. GDP   \n10 1949-04-01  271. GDP   \n# ℹ 1,643 more rows"
+  },
+  {
+    "objectID": "day1_part1_tidyverse.html#print-and-view-data",
+    "href": "day1_part1_tidyverse.html#print-and-view-data",
+    "title": "Day 1 Part 1: Analysis with Tidyverse",
+    "section": "Print and View Data",
+    "text": "Print and View Data\nPrint the data and view it in the viewer for a detailed look. Viewing the data in this manner allows us to understand the structure and content of the dataset, which is helpful for planning further analysis steps.\n\nView(fred)\n\nfred %&gt;% View"
+  },
+  {
+    "objectID": "day1_part1_tidyverse.html#summary-of-data",
+    "href": "day1_part1_tidyverse.html#summary-of-data",
+    "title": "Day 1 Part 1: Analysis with Tidyverse",
+    "section": "Summary of Data",
+    "text": "Summary of Data\nDisplay a summary glimpse of the FRED data. A quick overview of the dataset’s variables helps verify data types, spot missing values, and understand the overall data structure.\n\nfred %&gt;% glimpse()\n\nRows: 1,653\nColumns: 3\n$ date   &lt;date&gt; 1947-01-01, 1947-04-01, 1947-07-01, 1947-10-01, 1948-01-01, 19…\n$ value  &lt;dbl&gt; 243.164, 245.968, 249.585, 259.745, 265.742, 272.567, 279.196, …\n$ series &lt;chr&gt; \"GDP\", \"GDP\", \"GDP\", \"GDP\", \"GDP\", \"GDP\", \"GDP\", \"GDP\", \"GDP\", …"
+  },
+  {
+    "objectID": "day1_part1_tidyverse.html#filter-for-cpiaucns-series",
+    "href": "day1_part1_tidyverse.html#filter-for-cpiaucns-series",
+    "title": "Day 1 Part 1: Analysis with Tidyverse",
+    "section": "Filter for CPIAUCNS Series",
+    "text": "Filter for CPIAUCNS Series\nFilter the FRED data to show only the CPIAUCNS series. Filtering for the Consumer Price Index series allows us to focus on inflation data, which is an important economic indicator for understanding price stability.\n\nfred %&gt;% filter(series == \"CPIAUCNS\")\n\n# A tibble: 1,342 × 3\n   date       value series  \n   &lt;date&gt;     &lt;dbl&gt; &lt;chr&gt;   \n 1 1913-01-01   9.8 CPIAUCNS\n 2 1913-02-01   9.8 CPIAUCNS\n 3 1913-03-01   9.8 CPIAUCNS\n 4 1913-04-01   9.8 CPIAUCNS\n 5 1913-05-01   9.7 CPIAUCNS\n 6 1913-06-01   9.8 CPIAUCNS\n 7 1913-07-01   9.9 CPIAUCNS\n 8 1913-08-01   9.9 CPIAUCNS\n 9 1913-09-01  10   CPIAUCNS\n10 1913-10-01  10   CPIAUCNS\n# ℹ 1,332 more rows"
+  },
+  {
+    "objectID": "day1_part1_tidyverse.html#summary-statistics-for-cpiaucns",
+    "href": "day1_part1_tidyverse.html#summary-statistics-for-cpiaucns",
+    "title": "Day 1 Part 1: Analysis with Tidyverse",
+    "section": "Summary Statistics for CPIAUCNS",
+    "text": "Summary Statistics for CPIAUCNS\nCalculate the earliest date, latest date, and mean value for the CPIAUCNS series. These summary statistics provide insights into the temporal coverage of the data and the average level of consumer prices over the observed period.\n\nfred %&gt;% \n  filter(series == \"CPIAUCNS\") %&gt;% \n  summarise(\n    min(date), \n    max(date), \n    mean(value)\n  )\n\n# A tibble: 1 × 3\n  `min(date)` `max(date)` `mean(value)`\n  &lt;date&gt;      &lt;date&gt;              &lt;dbl&gt;\n1 1913-01-01  2024-10-01           88.9\n\n\nProvide an enhanced summary of CPIAUCNS with labeled output for minimum and maximum dates, and mean value. This labeled summary helps in clearly interpreting the results, which is useful for documentation and reporting.\n\nfred %&gt;% \n  filter(series == \"CPIAUCNS\") %&gt;% \n  summarise(\n    date_min = min(date),\n    date_max = max(date),\n    value_mean = mean(value)\n  )\n\n# A tibble: 1 × 3\n  date_min   date_max   value_mean\n  &lt;date&gt;     &lt;date&gt;          &lt;dbl&gt;\n1 1913-01-01 2024-10-01       88.9"
+  },
+  {
+    "objectID": "day1_part1_tidyverse.html#summary-for-all-series",
+    "href": "day1_part1_tidyverse.html#summary-for-all-series",
+    "title": "Day 1 Part 1: Analysis with Tidyverse",
+    "section": "Summary for All Series",
+    "text": "Summary for All Series\nSummarize minimum and maximum dates, and mean value for each series in the FRED data. Summarizing each series individually allows us to compare the temporal coverage and mean values, providing a comparative snapshot of the key metrics for GDP and CPI.\n\nfred %&gt;% \n  group_by(series) %&gt;% \n  summarise(\n    date_min = min(date),\n    date_max = max(date),\n    value_mean = mean(value)\n  )\n\n# A tibble: 2 × 4\n  series   date_min   date_max   value_mean\n  &lt;chr&gt;    &lt;date&gt;     &lt;date&gt;          &lt;dbl&gt;\n1 CPIAUCNS 1913-01-01 2024-10-01       88.9\n2 GDP      1947-01-01 2024-07-01     7380."
+  },
+  {
+    "objectID": "day1_part1_tidyverse.html#yearly-mean-value",
+    "href": "day1_part1_tidyverse.html#yearly-mean-value",
+    "title": "Day 1 Part 1: Analysis with Tidyverse",
+    "section": "Yearly Mean Value",
+    "text": "Yearly Mean Value\nCalculate the yearly mean value for each series in the FRED data. Calculating yearly means helps smooth out short-term fluctuations and reveal longer-term trends, which is important for econometric modeling.\n\nfred %&gt;% \n  group_by(series, year = year(date)) %&gt;% \n  summarise(value_mean = mean(value))\n\n`summarise()` has grouped output by 'series'. You can override using the\n`.groups` argument.\n\n\n# A tibble: 190 × 3\n# Groups:   series [2]\n   series    year value_mean\n   &lt;chr&gt;    &lt;dbl&gt;      &lt;dbl&gt;\n 1 CPIAUCNS  1913       9.88\n 2 CPIAUCNS  1914      10.0 \n 3 CPIAUCNS  1915      10.1 \n 4 CPIAUCNS  1916      10.9 \n 5 CPIAUCNS  1917      12.8 \n 6 CPIAUCNS  1918      15.0 \n 7 CPIAUCNS  1919      17.3 \n 8 CPIAUCNS  1920      20.0 \n 9 CPIAUCNS  1921      17.8 \n10 CPIAUCNS  1922      16.8 \n# ℹ 180 more rows"
+  },
+  {
+    "objectID": "day1_part1_tidyverse.html#pivot-yearly-mean-data",
+    "href": "day1_part1_tidyverse.html#pivot-yearly-mean-data",
+    "title": "Day 1 Part 1: Analysis with Tidyverse",
+    "section": "Pivot Yearly Mean Data",
+    "text": "Pivot Yearly Mean Data\nPivot the yearly mean data to show each series as a column for easier comparison. Pivoting the data allows us to easily compare trends across different economic indicators, making it more efficient to analyze relationships between GDP and CPI.\n\nfred %&gt;% \n  group_by(series, year = year(date)) %&gt;% \n  summarise(value_mean = mean(value)) %&gt;% \n  pivot_wider(\n    id_cols = year,\n    names_from = series,\n    values_from = value_mean\n  )\n\n`summarise()` has grouped output by 'series'. You can override using the\n`.groups` argument.\n\n\n# A tibble: 112 × 3\n    year CPIAUCNS   GDP\n   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;\n 1  1913     9.88    NA\n 2  1914    10.0     NA\n 3  1915    10.1     NA\n 4  1916    10.9     NA\n 5  1917    12.8     NA\n 6  1918    15.0     NA\n 7  1919    17.3     NA\n 8  1920    20.0     NA\n 9  1921    17.8     NA\n10  1922    16.8     NA\n# ℹ 102 more rows"
+  },
+  {
+    "objectID": "day1_part1_tidyverse.html#summarize-and-reshape-yearly-data",
+    "href": "day1_part1_tidyverse.html#summarize-and-reshape-yearly-data",
+    "title": "Day 1 Part 1: Analysis with Tidyverse",
+    "section": "Summarize and Reshape Yearly Data",
+    "text": "Summarize and Reshape Yearly Data\nSummarize and reshape the data to show yearly averages for each series, then pivot to make each series a column and remove any missing data. Removing missing values after reshaping ensures a clean dataset, which is crucial for accurate analysis and avoids issues during statistical modeling.\n\nfred_yearly &lt;- \n  fred %&gt;% \n  group_by(series, year = year(date)) %&gt;% \n  summarise(value_mean = mean(value)) %&gt;% \n  pivot_wider(\n    id_cols = year,\n    names_from = series,\n    values_from = value_mean\n  ) %&gt;% \n  remove_missing()\n\n`summarise()` has grouped output by 'series'. You can override using the\n`.groups` argument.\n\n\nWarning: Removed 34 rows containing missing values or values outside the scale\nrange.\n\nfred_yearly\n\n# A tibble: 78 × 3\n    year CPIAUCNS   GDP\n   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;\n 1  1947     22.3  250.\n 2  1948     24.0  274.\n 3  1949     23.8  272.\n 4  1950     24.1  300.\n 5  1951     26.0  347.\n 6  1952     26.6  367.\n 7  1953     26.8  389.\n 8  1954     26.8  391.\n 9  1955     26.8  425.\n10  1956     27.2  449.\n# ℹ 68 more rows"
+  },
+  {
+    "objectID": "day1_part1_tidyverse.html#inspect-gdp-data",
+    "href": "day1_part1_tidyverse.html#inspect-gdp-data",
+    "title": "Day 1 Part 1: Analysis with Tidyverse",
+    "section": "Inspect GDP Data",
+    "text": "Inspect GDP Data\nSelect and inspect the GDP data, organizing it by year. Inspecting GDP specifically allows us to focus on this key economic indicator, preparing it for further analysis such as trend examination and forecasting.\n\nGDP &lt;- \n  fred_yearly %&gt;% \n  select(year, GDP) %&gt;% \n  glimpse()\n\nRows: 78\nColumns: 2\n$ year &lt;dbl&gt; 1947, 1948, 1949, 1950, 1951, 1952, 1953, 1954, 1955, 1956, 1957,…\n$ GDP  &lt;dbl&gt; 249.6155, 274.4678, 272.4753, 299.8272, 346.9133, 367.3408, 389.2…"
+  },
+  {
+    "objectID": "day1_part1_tidyverse.html#plot-gdp-over-time",
+    "href": "day1_part1_tidyverse.html#plot-gdp-over-time",
+    "title": "Day 1 Part 1: Analysis with Tidyverse",
+    "section": "Plot GDP Over Time",
+    "text": "Plot GDP Over Time\nConvert GDP data to a time-series format and plot it over time. Visualizing GDP over time allows us to identify potential trends, cycles, or structural breaks, which is an important preliminary step before formal econometric modeling.\n\nGDP %&gt;% \n  as_tsibble(index=year) %&gt;% \n  autoplot(.vars=GDP)"
+  },
+  {
+    "objectID": "day1_part1_tidyverse.html#logarithmic-gdp-analysis",
+    "href": "day1_part1_tidyverse.html#logarithmic-gdp-analysis",
+    "title": "Day 1 Part 1: Analysis with Tidyverse",
+    "section": "Logarithmic GDP Analysis",
+    "text": "Logarithmic GDP Analysis\nConvert GDP data to a time-series format, add a column with the log of GDP, and plot the logarithmic GDP over time to analyze growth trends. Taking the logarithm of GDP helps linearize exponential growth patterns, making it easier to interpret percentage changes and apply econometric models that assume linear relationships.\n\nGDP %&gt;% \n  as_tsibble(index=year) %&gt;% \n  mutate(log_GDP = log(GDP)) %&gt;% \n  autoplot(.vars = log_GDP)"
+  }
+]
