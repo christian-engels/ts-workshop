@@ -4,17 +4,6 @@ subtitle: "Zero to Hero Bootcamp - Time Series Econometrics in R"
 author: "Dr Christian Engels"
 date: "16 November 2024"
 published-title: "Last updated"
-# format: 
-#   html:
-#     toc: true
-#     toc-location: right-body
-#     toc-depth: 2
-#     toc-title: "Contents"
-#     html-math-method: katex
-#     theme: flatly
-#     number-sections: false
-#     self-contained: true
-#     title-block-banner: true
 ---
 
 ## Load Libraries

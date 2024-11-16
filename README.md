@@ -2,4 +2,4 @@
 
 This is the repository for the time series bootcamp.
 
-Visit the website [here[(https://christian-engels.github.io/ts-workshop)
+Visit the website [here](https://christian-engels.github.io/ts-workshop)
