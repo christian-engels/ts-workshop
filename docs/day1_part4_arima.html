@@ -4878,6 +4878,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#additional-useful-functions" id="toc-additional-useful-functions" class="nav-link" data-scroll-target="#additional-useful-functions">Additional Useful Functions</a></li>
   <li><a href="#preview-of-volatility-processes" id="toc-preview-of-volatility-processes" class="nav-link" data-scroll-target="#preview-of-volatility-processes">Preview of Volatility Processes</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
   </ul>
 </nav>
     </div>
@@ -5454,6 +5455,18 @@ AIC=-16384.82   AICc=-16384.76   BIC=-16338.19</code></pre>
 </div>
 </div>
 <p>This squared log-return series is then visualized using <code>autoplot</code>, offering a clear depiction of volatility clustering: periods where high or low variability tends to persist. Observing these clusters is valuable, as it reveals underlying patterns of market behavior that can inform the selection and calibration of models like ARIMA or other volatility-focused models.</p>
+</section>
+<section id="exercises" class="level2">
+<h2 class="anchored" data-anchor-id="exercises">Exercises</h2>
+<p>In this exercise, you will build an ARIMA model for a stock of your choice and forecast its returns.</p>
+<ol type="1">
+<li>Using the <code>data_download</code> function, download the daily price series for a stock of your choice.</li>
+<li>Visualise the daily log returns for the stock, together with the ACF and PACF.</li>
+<li>Automatically fit an ARIMA model for the daily log return series and investigate its properties.</li>
+<li>Plot the fitted return series together with the original data.</li>
+<li>Forecast the next five days of daily log returns.</li>
+</ol>
+<p><strong>Bonus</strong>: Using the stock’s data, can you spot periods of high volatility</p>
 
 
 </section>

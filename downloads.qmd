@@ -1,0 +1,21 @@
+---
+title: "Downloads"
+author: "Dr Christian Engels"
+date: "16 November 2024"
+published-title: "Last updated"
+# format:
+#   html:
+#     toc: true
+#     toc-location: right-body
+#     toc-depth: 2
+#     toc-title: "Contents"
+#     html-math-method: katex
+#     theme: flatly
+#     number-sections: false
+#     self-contained: true
+#     title-block-banner: true
+---
+
+## Day 1
+
+Download all code here: [day1_code.zip](day1_code.zip)

@@ -1,0 +1,166 @@
+---
+title: "Day 1 Part 2: Exploring Time Series Data"
+author: "Dr Christian Engels"
+date: "16 November 2024"
+published-title: "Last updated"
+---
+
+## Load Libraries
+
+Load necessary libraries for data manipulation, finance data, and time-series analysis. These packages will enable sophisticated econometric analysis, such as stationarity checks, model fitting, and forecasting of financial time series data. These libraries will allow us to efficiently handle and visualize time series data, perform statistical analysis, and work with financial datasets.
+
+```{r, message=FALSE}
+library(tidyverse)
+library(tidyfinance)
+library(tsibble)
+library(fable)
+library(feasts)
+library(scales)
+```
+
+## Download Apple Stock Data
+
+Download Apple stock prices from 2010 to 2020 and inspect the data. This time series will be used to explore stock price dynamics, perform volatility analysis, and conduct model estimation for financial econometric purposes. This data will help us understand Apple's historical performance and serve as the foundation for our time-series analysis.
+
+```{r}
+AAPL <- 
+  download_data(
+    "stock_prices", 
+    symbols = "AAPL", 
+    start = "2010-01-01", 
+    end = "2020-01-01"
+  )
+
+AAPL %>% glimpse()
+```
+
+## Prepare Closing Price Data
+
+Rename and organize closing prices, converting the data into a `tsibble`. The `tsibble` structure will allow for the application of time series econometric methods, such as differentiation and model specification, by leveraging its temporal index. A `tsibble` is a specialized time-series data format in R, which allows us to perform various time-based operations more easily.
+
+```{r}
+closing_price <- 
+  AAPL %>% 
+  rename(price = adjusted_close) %>% 
+  select(symbol, date, price) %>% 
+  as_tsibble(
+    index = date, 
+    regular = FALSE
+  ) %>% 
+  glimpse()
+```
+
+## Calculate Logarithmic Returns
+
+Calculate the log of prices and the daily log returns. Logarithmic returns are useful for time series econometrics because they stabilize variance over time and allow additive decomposition of returns, simplifying the model estimation and analysis. Log returns are commonly used in finance to better capture the relative change in prices and handle the compounding nature of returns.
+
+```{r}
+log_returns <- 
+  closing_price %>% 
+  mutate(
+    lprice = log(price),
+    lreturn = difference(lprice, lag = 1, differences = 1)
+  ) %>% 
+  glimpse()
+```
+
+## Visualize Prices and Returns
+
+### Price Over Time
+
+This plot will show the trend of Apple's stock price over the given period, providing an overview of its growth or decline. This visualization is crucial for identifying non-stationarity, potential structural breaks, and trends that may necessitate differencing before model fitting.
+
+```{r}
+log_returns %>% autoplot(.vars = price)
+```
+
+### Log Price Over Time
+
+The log price plot allows us to visualize the price changes on a logarithmic scale, which is useful for observing relative growth. This transformation helps in linearizing exponential growth patterns, making it more appropriate for econometric modeling and reducing potential heteroskedasticity.
+
+```{r}
+log_returns %>% autoplot(.vars = lprice)
+```
+
+### Log Returns Over Time
+
+This plot will depict the daily log returns, highlighting the variability and volatility of Apple's stock over time. Examining log returns over time can reveal volatility clustering, a common feature in financial time series that will inform our choice of econometric models, such as GARCH.
+
+```{r}
+log_returns %>% autoplot(.vars = lreturn)
+```
+
+## Quantile Analysis
+
+Calculate the 5th percentile of daily log returns. The 5th percentile is often used in Value at Risk (VaR) calculations to assess the potential downside risk in holding the asset over a given time frame. The 5th percentile helps us understand the lower tail of the return distribution, indicating extreme negative returns that could represent risk scenarios.
+
+```{r}
+quantile_05 <- 
+  quantile(
+    log_returns %>% 
+      remove_missing() %>% 
+      pull(lreturn), 
+    probs = 0.05
+  )
+quantile_05
+```
+
+## Plot Distribution of Daily Returns
+
+Plot a histogram of daily log returns with a dashed line for the 5th percentile. Understanding the distribution of returns is critical for time series modeling, as it informs the assumptions of normality or fat tails, which are essential for selecting appropriate econometric models. The histogram gives us a visual representation of the return distribution, while the dashed line indicates the 5th percentile, helping us identify the risk threshold.
+
+
+```{r}
+log_returns %>% 
+  ggplot(aes(x = lreturn)) +
+  geom_histogram(bins = 100) +
+  geom_vline(aes(xintercept = quantile_05),
+             linetype = "dashed"
+  ) +
+  labs(
+    x = NULL,
+    y = NULL,
+    title = "Distribution of daily Apple stock returns"
+  ) +
+  scale_x_continuous(labels = percent)
+```
+
+## Aggregate Weekly Log Returns
+
+Summarize log returns by week and plot the results. Aggregating returns to a weekly level can help mitigate the noise inherent in daily data and better reveal underlying cyclical patterns, which can be relevant for macroeconomic linkages. Aggregating returns by week helps smooth out daily fluctuations and provides a clearer picture of the overall trend.
+
+
+```{r}
+log_returns_weekly <- 
+  log_returns %>% 
+    index_by(yearweek = ~yearweek(.)) %>% 
+    summarise(lreturn = sum(lreturn)) %>% 
+    glimpse()
+
+log_returns_weekly %>% autoplot()
+```
+
+## Aggregate Monthly Log Returns
+
+Summarize log returns by month and plot the results. Monthly aggregation is useful for analyzing longer-term trends and understanding seasonality, which are key considerations in time series econometric models, such as ARIMA. Monthly aggregation allows us to observe long-term patterns and seasonal trends in Apple's stock performance.
+
+
+```{r}
+log_returns_monthly <- 
+  log_returns %>% 
+    index_by(yearmonth = ~yearmonth(.)) %>% 
+    summarise(lreturn = sum(lreturn)) %>% 
+    glimpse()
+
+log_returns_monthly %>% autoplot()
+```
+
+## Exercises
+
+In this exercise you will download data for a stock of your choice and apply the concepts you have learned to its data.
+
+1. Read the documentation of the `data_download` function using the command `?download_data` and download the constituents from one of the supported indices: DAX, EURO STOXX 50, Dow Jones
+  Industrial Average, Russell 1000, Russell 2000, Russell 3000, S&P 100, S&P 500, Nasdaq 100, FTSE 100, MSCI
+  World, Nikkei 225, TOPIX.
+2. Pick one of the constituents, look it up on [Yahoo Finance](https://uk.finance.yahoo.com), download its data using `data_download` and plot the adjusted closing price.
+3. Aggregate the series to the monthly level and plot the monthly log returns.
