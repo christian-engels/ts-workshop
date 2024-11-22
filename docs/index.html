@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Dr Christian Engels">
-<meta name="dcterms.date" content="2024-11-15">
+<meta name="dcterms.date" content="2024-11-22">
 
 <title>Zero to Hero Bootcamp</title>
 <style>
@@ -4760,22 +4760,48 @@ vertical-align: -.125em;
     <a class="nav-link active" href="./index.html" aria-current="page"> 
 <span class="menu-text">Zero to Hero Bootcamp</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./day1_part1_tidyverse.html"> 
-<span class="menu-text">Part 1: Analysis with Tidyverse</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-day-1-content" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Day 1 Content</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-day-1-content">    
+        <li>
+    <a class="dropdown-item" href="./day1_part1_tidyverse.html">
+ <span class="dropdown-text">Part 1: Analysis with Tidyverse</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./day1_part2_time_series_data.html"> 
-<span class="menu-text">Part 2: Exploring Time Series Data</span></a>
+        <li>
+    <a class="dropdown-item" href="./day1_part2_time_series_data.html">
+ <span class="dropdown-text">Part 2: Exploring Time Series Data</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./day1_part3_random_walks.html"> 
-<span class="menu-text">Part 3: Random Walks</span></a>
+        <li>
+    <a class="dropdown-item" href="./day1_part3_random_walks.html">
+ <span class="dropdown-text">Part 3: Random Walks</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./day1_part4_arima.html"> 
-<span class="menu-text">Part 4: ARIMA modelling</span></a>
+        <li>
+    <a class="dropdown-item" href="./day1_part4_arima.html">
+ <span class="dropdown-text">Part 4: ARIMA modelling</span></a>
   </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-day-2-content" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Day 2 Content</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-day-2-content">    
+        <li>
+    <a class="dropdown-item" href="./day2_part1_volatility_processes.html">
+ <span class="dropdown-text">Part 1: Simulating Volatility Processes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./day2_part2_fitting_models.html">
+ <span class="dropdown-text">Part 2: Fitting Volatility Models</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./day2_part3_application_to_stock_portfolio.html">
+ <span class="dropdown-text">Part 3: Application to S&amp;P 500 Stock Portfolio</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="./downloads.html"> 
 <span class="menu-text">Downloads</span></a>
@@ -4793,14 +4819,11 @@ vertical-align: -.125em;
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
+    <h2 id="toc-title">Contents</h2>
    
-  <ul>
-  <li><a href="#workshop-aims" id="toc-workshop-aims" class="nav-link active" data-scroll-target="#workshop-aims">Workshop aims</a></li>
-  <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link" data-scroll-target="#learning-outcomes">Learning outcomes</a></li>
-  <li><a href="#where-and-when" id="toc-where-and-when" class="nav-link" data-scroll-target="#where-and-when">Where and when?</a></li>
-  <li><a href="#what-to-bring" id="toc-what-to-bring" class="nav-link" data-scroll-target="#what-to-bring">What to bring?</a></li>
-  <li><a href="#useful-resources" id="toc-useful-resources" class="nav-link" data-scroll-target="#useful-resources">Useful resources</a></li>
+  <ul class="collapse">
+  <li><a href="#day-2-advanced-time-series-econometrics-in-r" id="toc-day-2-advanced-time-series-econometrics-in-r" class="nav-link active" data-scroll-target="#day-2-advanced-time-series-econometrics-in-r">Day 2: Advanced Time Series Econometrics in R</a></li>
+  <li><a href="#day-1-fundamentals-of-time-series-econometrics-in-r" id="toc-day-1-fundamentals-of-time-series-econometrics-in-r" class="nav-link" data-scroll-target="#day-1-fundamentals-of-time-series-econometrics-in-r">Day 1: Fundamentals of Time Series Econometrics in R</a></li>
   <li><a href="#questions" id="toc-questions" class="nav-link" data-scroll-target="#questions">Questions?</a></li>
   </ul>
 </nav>
@@ -4811,7 +4834,7 @@ vertical-align: -.125em;
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Zero to Hero Bootcamp</h1>
-<p class="subtitle lead">Day 1: Fundamentals of Time Series Econometrics in R</p>
+<p class="subtitle lead">Comprehensive Workshop on Time Series Econometrics in R</p>
 </div>
 
 
@@ -4828,7 +4851,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Last updated</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 15, 2024</p>
+      <p class="date">November 22, 2024</p>
     </div>
   </div>
   
@@ -4840,39 +4863,57 @@ vertical-align: -.125em;
 </header>
 
 
-<section id="workshop-aims" class="level1">
-<h1>Workshop aims</h1>
-<p>Day 1 of this workshop introduces participants to foundational concepts and techniques in time series analysis using R. It focuses on equipping attendees with practical skills for handling, analyzing and modeling time series data, with applications relevant to finance and economics.</p>
-<p>Indicative topics:</p>
+<section id="day-2-advanced-time-series-econometrics-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="day-2-advanced-time-series-econometrics-in-r">Day 2: Advanced Time Series Econometrics in R</h2>
+<section id="aims" class="level3">
+<h3 class="anchored" data-anchor-id="aims">Aims</h3>
+<p>Day 2 of this workshop builds upon the foundational concepts covered in Day 1, delving deeper into advanced topics in time series econometrics using R. The focus will be on modeling volatility processes, fitting GARCH models to financial data, and applying these techniques to real-world financial datasets.</p>
+<p><strong>Indicative Topics:</strong></p>
 <ol type="1">
-<li>Analysis with Tidyverse</li>
-<li>Exploring Time Series Data</li>
-<li>Stationarity and Random Walks</li>
-<li>ARIMA modelling</li>
-<li>Preview of volatility processes</li>
+<li><strong>Simulating Volatility Processes</strong>
+<ul>
+<li>Understanding different types of GARCH models.</li>
+<li>Simulating time series data using specified GARCH models.</li>
+<li>Visualizing and analyzing simulated volatility processes.</li>
+</ul></li>
+<li><strong>Fitting Volatility Models</strong>
+<ul>
+<li>Downloading and preparing financial time series data.</li>
+<li>Performing exploratory data analysis (EDA).</li>
+<li>Fitting various GARCH models to real-world data.</li>
+<li>Evaluating model diagnostics and selecting appropriate models.</li>
+<li>Forecasting future volatility and calculating risk measures like VaR and ES.</li>
+</ul></li>
+<li><strong>Application to S&amp;P 500 Stock Portfolio</strong>
+<ul>
+<li>Constructing a minimum variance portfolio.</li>
+<li>Applying GARCH models to portfolio returns.</li>
+<li>Performing rolling forecasts and backtesting.</li>
+<li>Assessing portfolio risk using advanced econometric techniques.</li>
+</ul></li>
 </ol>
 </section>
-<section id="learning-outcomes" class="level1">
-<h1>Learning outcomes</h1>
-<p>By the end of the first workshop day, participants will be able to:</p>
+<section id="learning-outcomes" class="level3">
+<h3 class="anchored" data-anchor-id="learning-outcomes">Learning Outcomes</h3>
+<p>By the end of the second workshop day, participants will be able to:</p>
 <ul>
-<li>Use Tidyverse tools for data analysis in R</li>
-<li>Explore and visualize time series data effectively</li>
-<li>Understand and apply concepts of random walks and stationarity</li>
-<li>Develop and interpret ARIMA models for forecasting</li>
-<li>Gain insight into volatility processes</li>
+<li>Simulate and analyze various GARCH models to understand volatility dynamics.</li>
+<li>Fit GARCH models to financial time series data and interpret the results.</li>
+<li>Use model diagnostics to evaluate and select appropriate volatility models.</li>
+<li>Forecast future volatility and calculate risk measures such as Value at Risk (VaR) and Expected Shortfall (ES).</li>
+<li>Apply volatility modeling techniques to construct and analyze stock portfolios.</li>
 </ul>
 </section>
-<section id="where-and-when" class="level1">
-<h1>Where and when?</h1>
+<section id="where-and-when" class="level3">
+<h3 class="anchored" data-anchor-id="where-and-when">Where and When?</h3>
 <ul>
-<li><strong>Date</strong>: 16 November</li>
+<li><strong>Date</strong>: 23 November 2024</li>
 <li><strong>Time</strong>: 10:00-16:00</li>
-<li><strong>Location</strong>: WB-0001 <a href="https://www.google.co.uk/maps/place/Durham+University+Business+School/@53.9879544,-4.1095165,7z/data=!4m7!3m6!1s0x487e7d000a7fdd8f:0x42b4506fe1c14d86!8m2!3d54.7803969!4d-1.5754568!15sChJ3YXRlcnNpZGUgYnVpbGRpbmdaFCISd2F0ZXJzaWRlIGJ1aWxkaW5nkgEKdW5pdmVyc2l0eZoBJENoZERTVWhOTUc5blMwVkpRMEZuU1VOSU16aHlRMnAzUlJBQuABAA!16s%2Fg%2F11y6f6m247?entry=tts&amp;g_ep=EgoyMDI0MTExMS4wIPu8ASoASAFQAw%3D%3D">(Google Maps Location)</a></li>
+<li><strong>Location</strong>: WB-0001 <a href="https://www.google.com/maps/place/Durham+University+Business+School/">(Google Maps Location)</a></li>
 </ul>
 </section>
-<section id="what-to-bring" class="level1">
-<h1>What to bring?</h1>
+<section id="what-to-bring" class="level3">
+<h3 class="anchored" data-anchor-id="what-to-bring">What to Bring?</h3>
 <ul>
 <li>Your own <strong>laptop</strong></li>
 <li>Installation of <strong>R and RStudio</strong>
@@ -4883,77 +4924,205 @@ vertical-align: -.125em;
 </ul></li>
 <li>Installation of <strong>R packages</strong> (details below)</li>
 </ul>
-<p><span style="color:red;">Please prepare – all download and installation steps can take 1 hour, or longer!</span> If you already have an installation, please update to newest version.</p>
+<p><span style="color:red;">Please prepare — all download and installation steps can take 1 hour, or longer!</span> If you already have an installation, please update to the newest version.</p>
+<p>To install the necessary packages, run this code in RStudio:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>posit_repo <span class="ot">&lt;-</span> </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;https://packagemanager.posit.co/cran/latest&quot;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>workshop_packages <span class="ot">&lt;-</span> </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;tidyverse&quot;</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;tsibble&quot;</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;feasts&quot;</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;fable&quot;</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;tsgarch&quot;</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;tidyfinance&quot;</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;httr2&quot;</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;fixest&quot;</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;flextable&quot;</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;xts&quot;</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;urca&quot;</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;rugarch&quot;</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;PortfolioAnalytics&quot;</span>,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;ggpubr&quot;</span>,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;forecast&quot;</span>,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;tseries&quot;</span>,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;broom&quot;</span>,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;moments&quot;</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    workshop_packages, </span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">repos =</span> posit_repo</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="agenda" class="level3">
+<h3 class="anchored" data-anchor-id="agenda">Agenda</h3>
+<section id="session-1-simulating-volatility-processes" class="level4">
+<h4 class="anchored" data-anchor-id="session-1-simulating-volatility-processes">Session 1: Simulating Volatility Processes</h4>
+<p>In this session, we will:</p>
+<ul>
+<li><strong>Specify Different GARCH Models</strong>: Learn how to define various GARCH models such as sGARCH, GJR-GARCH, eGARCH, and apARCH using the <code>rugarch</code> package.</li>
+<li><strong>Simulate Time Series Data</strong>: Use the specified models to simulate time series data and understand the behavior of different volatility processes.</li>
+<li><strong>Visualize and Analyze Simulated Data</strong>: Plot the simulated series and their corresponding volatilities to observe the characteristics and differences among the models.</li>
+</ul>
+<p><strong>Key Activities:</strong></p>
+<ul>
+<li>Specifying GARCH models using <code>ugarchspec</code>.</li>
+<li>Simulating data with <code>ugarchpath</code>.</li>
+<li>Visualizing time series and volatility processes using <code>ggplot2</code> and <code>tsibble</code>.</li>
+</ul>
+</section>
+<section id="session-2-fitting-volatility-models" class="level4">
+<h4 class="anchored" data-anchor-id="session-2-fitting-volatility-models">Session 2: Fitting Volatility Models</h4>
+<p>In this session, we will:</p>
+<ul>
+<li><strong>Download and Prepare Financial Data</strong>: Acquire S&amp;P 500 index data and calculate daily returns.</li>
+<li><strong>Perform Exploratory Data Analysis (EDA)</strong>: Analyze the statistical properties of the returns, including mean, standard deviation, skewness, and kurtosis.</li>
+<li><strong>Fit GARCH Models to Real Data</strong>: Apply different GARCH models to the returns data using <code>ugarchfit</code>.</li>
+<li><strong>Evaluate Model Diagnostics</strong>: Use criteria such as AIC and BIC to select the best-fitting model.</li>
+<li><strong>Forecast Future Volatility and Risk Measures</strong>: Generate volatility forecasts and calculate Value at Risk (VaR) and Expected Shortfall (ES).</li>
+</ul>
+<p><strong>Key Activities:</strong></p>
+<ul>
+<li>Data manipulation and visualization with <code>tidyverse</code>.</li>
+<li>Model fitting and diagnostics using <code>rugarch</code>.</li>
+<li>Risk assessment calculations for VaR and ES.</li>
+</ul>
+</section>
+<section id="session-3-application-to-sp-500-stock-portfolio" class="level4">
+<h4 class="anchored" data-anchor-id="session-3-application-to-sp-500-stock-portfolio">Session 3: Application to S&amp;P 500 Stock Portfolio</h4>
+<p>In this session, we will:</p>
+<ul>
+<li><strong>Construct a Minimum Variance Portfolio</strong>: Optimize a portfolio of S&amp;P 500 stocks to minimize risk using the <code>PortfolioAnalytics</code> package.</li>
+<li><strong>Calculate Portfolio Returns</strong>: Compute the daily returns of the optimized portfolio.</li>
+<li><strong>Fit a GARCH Model to Portfolio Returns</strong>: Model the volatility of the portfolio returns with a TGARCH model.</li>
+<li><strong>Perform Rolling Forecasts and Backtesting</strong>: Use <code>ugarchroll</code> to evaluate the model’s performance over time and assess its predictive power.</li>
+<li><strong>Assess Portfolio Risk</strong>: Analyze the Value at Risk (VaR) and backtest the model to ensure its adequacy.</li>
+</ul>
+<p><strong>Key Activities:</strong></p>
+<ul>
+<li>Portfolio optimization and risk management.</li>
+<li>Time series modeling of portfolio returns.</li>
+<li>Rolling forecasts and backtesting with <code>rugarch</code>.</li>
+<li>Visualization and interpretation of results.</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="day-1-fundamentals-of-time-series-econometrics-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="day-1-fundamentals-of-time-series-econometrics-in-r">Day 1: Fundamentals of Time Series Econometrics in R</h2>
+<section id="aims-1" class="level3">
+<h3 class="anchored" data-anchor-id="aims-1">Aims</h3>
+<p>Day 1 of this workshop introduces participants to foundational concepts and techniques in time series analysis using R. It focuses on equipping attendees with practical skills for handling, analyzing, and modeling time series data, with applications relevant to finance and economics.</p>
+<p><strong>Indicative Topics:</strong></p>
+<ol type="1">
+<li><strong>Analysis with Tidyverse</strong></li>
+<li><strong>Exploring Time Series Data</strong></li>
+<li><strong>Stationarity and Random Walks</strong></li>
+<li><strong>ARIMA Modeling</strong></li>
+<li><strong>Preview of Volatility Processes</strong></li>
+</ol>
+</section>
+<section id="learning-outcomes-1" class="level3">
+<h3 class="anchored" data-anchor-id="learning-outcomes-1">Learning Outcomes</h3>
+<p>By the end of the first workshop day, participants will be able to:</p>
+<ul>
+<li>Use Tidyverse tools for data analysis in R.</li>
+<li>Explore and visualize time series data effectively.</li>
+<li>Understand and apply concepts of random walks and stationarity.</li>
+<li>Develop and interpret ARIMA models for forecasting.</li>
+<li>Gain insight into volatility processes.</li>
+</ul>
+</section>
+<section id="where-and-when-1" class="level3">
+<h3 class="anchored" data-anchor-id="where-and-when-1">Where and When?</h3>
+<ul>
+<li><strong>Date</strong>: 16 November</li>
+<li><strong>Time</strong>: 10:00-16:00</li>
+<li><strong>Location</strong>: WB-0001 <a href="https://www.google.co.uk/maps/place/Durham+University+Business+School/@53.9879544,-4.1095165,7z/data=!4m7!3m6!1s0x487e7d000a7fdd8f:0x42b4506fe1c14d86!8m2!3d54.7803969!4d-1.5754568!15sChJ3YXRlcnNpZGUgYnVpbGRpbmdaFCISd2F0ZXJzaWRlIGJ1aWxkaW5nkgEKdW5pdmVyc2l0eZoBJENoZERTVWhOTUc5blMwVkpRMEZuU1VOSU16aHlRMnAzUlJBQuABAA!16s%2Fg%2F11y6f6m247?entry=tts&amp;g_ep=EgoyMDI0MTExMS4wIPu8ASoASAFQAw%3D%3D">(Google Maps Location)</a></li>
+</ul>
+</section>
+<section id="what-to-bring-1" class="level3">
+<h3 class="anchored" data-anchor-id="what-to-bring-1">What to Bring?</h3>
+<ul>
+<li>Your own <strong>laptop</strong></li>
+<li>Installation of <strong>R and RStudio</strong>
+<ul>
+<li>For R, follow <a href="https://www.stats.bris.ac.uk/R/">this link</a></li>
+<li>For RStudio, follow <a href="https://posit.co/download/rstudio-desktop/">this link</a></li>
+<li><strong>On Windows</strong>, also install RTools 4.4 from <a href="https://cran.rstudio.com/bin/windows/Rtools/rtools44/rtools.html">this link</a></li>
+</ul></li>
+<li>Installation of <strong>R packages</strong> (details below)</li>
+</ul>
+<p><span style="color:red;">Please prepare — all download and installation steps can take 1 hour, or longer!</span> If you already have an installation, please update to the newest version.</p>
 <p>After installing R, run this command:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">R.Version</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>And verify that your R Version is the following:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">R.Version</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>And verify that your R version is the following:</p>
 <pre><code>&quot;R version 4.4.2 (2024-10-31)&quot;
 &quot;Pile of Leaves&quot;</code></pre>
 <p>In RStudio, verify that this is your version:</p>
 <pre><code>Version 2024.09.1+394 (2024.09.1+394)</code></pre>
-<p>To install the necessary packages, run this below code in RStudio:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>posit_repo <span class="ot">&lt;-</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;https://packagemanager.posit.co/cran/latest&quot;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;renv&quot;</span>, </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">repos =</span> posit_repo,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ask =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">dependencies =</span> <span class="cn">TRUE</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>workshop_packages <span class="ot">&lt;-</span> </span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;tidyverse&quot;</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;tsibble&quot;</span>,</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;feasts&quot;</span>,</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;fable&quot;</span>,</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;tsgarch&quot;</span>,</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;tidyfinance&quot;</span>,</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;httr2&quot;</span>,</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;fixest&quot;</span>,</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;flextable&quot;</span>,</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;xts&quot;</span>,</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;urca&quot;</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>renv<span class="sc">::</span><span class="fu">install</span>(</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    workshop_packages, </span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">repos =</span> posit_repo, </span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">dependencies =</span> <span class="st">&quot;all&quot;</span>,</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">prompt =</span> <span class="cn">FALSE</span></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<p>To install the necessary packages, run this code in RStudio:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>posit_repo <span class="ot">&lt;-</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;https://packagemanager.posit.co/cran/latest&quot;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;renv&quot;</span>, </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">repos =</span> posit_repo,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ask =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">dependencies =</span> <span class="cn">TRUE</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>workshop_packages <span class="ot">&lt;-</span> </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;tidyverse&quot;</span>,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;tsibble&quot;</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;feasts&quot;</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;fable&quot;</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;tsgarch&quot;</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;tidyfinance&quot;</span>,</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;httr2&quot;</span>,</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;fixest&quot;</span>,</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;flextable&quot;</span>,</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;xts&quot;</span>,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;urca&quot;</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>renv<span class="sc">::</span><span class="fu">install</span>(</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    workshop_packages, </span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">repos =</span> posit_repo, </span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">dependencies =</span> <span class="st">&quot;all&quot;</span>,</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">prompt =</span> <span class="cn">FALSE</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="useful-resources" class="level1">
-<h1>Useful resources</h1>
+<section id="useful-resources" class="level3">
+<h3 class="anchored" data-anchor-id="useful-resources">Useful Resources</h3>
 <ul>
-<li>Textbook: “Applied Econometric Time Series (3e)” by Walter Enders</li>
-<li>Online book: <a href="https://r4ds.hadley.nz">Data Science for R</a>
+<li><strong>Textbook</strong>: “Applied Econometric Time Series (3e)” by Walter Enders</li>
+<li><strong>Online Book</strong>: <a href="https://r4ds.hadley.nz">Data Science for R</a>
 <ul>
 <li>Chapter <a href="https://r4ds.hadley.nz/intro">“Introduction”</a></li>
 <li>Chapter <a href="https://r4ds.hadley.nz/whole-game">“Whole Game”</a></li>
 </ul></li>
-<li>Online book: <a href="https://www.tidy-finance.org/r/">Tidy Finance with R</a>
+<li><strong>Online Book</strong>: <a href="https://www.tidy-finance.org/r/">Tidy Finance with R</a>
 <ul>
 <li>Chapter <a href="https://www.tidy-finance.org/r/accessing-and-managing-financial-data.html">“Accessing and Managing Financial Data”</a></li>
 </ul></li>
-<li>Online book: <a href="https://otexts.com/fpp3/">Forecasting: Principles and Practice</a>
+<li><strong>Online Book</strong>: <a href="https://otexts.com/fpp3/">Forecasting: Principles and Practice</a>
 <ul>
 <li>Chapter <a href="https://otexts.com/fpp3/regression.html">7: Time Series Regression Models</a></li>
-<li>Chapter <a href="https://otexts.com/fpp3/arima.html">9: ARIMA models</a></li>
+<li>Chapter <a href="https://otexts.com/fpp3/arima.html">9: ARIMA Models</a></li>
 </ul></li>
 </ul>
 </section>
-<section id="questions" class="level1">
-<h1>Questions?</h1>
+</section>
+<section id="questions" class="level2">
+<h2 class="anchored" data-anchor-id="questions">Questions?</h2>
 <p>Two options:</p>
 <ol type="1">
-<li>Post on <a href="https://padlet.com/tsworkshop1/time-series-analysis-3mit3r31fl806b5r">this Padlet</a> (password: ts-workshop). This is the <strong>preferred option</strong> as there will be a lot of participants at the workshop.</li>
-<li>Contact me at <a href="mailto:christian_engels@outlook.com">christian_engels@outlook.com</a>. I may not be able to respond to all requests, but I will try my best!</li>
+<li><strong>Post on <a href="https://padlet.com/tsworkshop1/time-series-analysis-3mit3r31fl806b5r">this Padlet</a></strong> (password: ts-workshop). This is the <strong>preferred option</strong> as there will be a lot of participants at the workshop.</li>
+<li><strong>Contact me at <a href="mailto:christian_engels@outlook.com">christian_engels@outlook.com</a></strong>. I may not be able to respond to all requests, but I will try my best!</li>
 </ol>
 
 
